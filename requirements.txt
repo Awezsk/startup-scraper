@@ -1,0 +1,6 @@
+playwright==1.44.0
+feedparser==6.0.11
+yake==0.4.8
+python-dotenv==1.0.1
+APScheduler==3.10.4
+jinja2==3.1.4

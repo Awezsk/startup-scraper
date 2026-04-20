@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Startup &amp; Grants Digest</title>
+</head>
+<body style="margin:0;padding:0;background:#0f0f1a;font-family:'Segoe UI',Arial,sans-serif;">
+
+<!-- Wrapper -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0f0f1a;">
+<tr><td align="center" style="padding:30px 15px;">
+
+<!-- Container -->
+<table width="620" cellpadding="0" cellspacing="0" border="0" style="max-width:620px;width:100%;">
+
+  <!-- HEADER -->
+  <tr>
+    <td style="background:linear-gradient(135deg,#6c3de8 0%,#3b9ef5 100%);border-radius:16px 16px 0 0;padding:36px 40px 28px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:8px;">🚀</div>
+      <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:-0.5px;">
+        India Startup &amp; Grants Digest
+      </h1>
+      <p style="margin:10px 0 0;color:rgba(255,255,255,0.75);font-size:14px;">
+        {{ date_str }} &nbsp;·&nbsp; Last 24 hours &nbsp;·&nbsp; {{ total }} articles found
+      </p>
+    </td>
+  </tr>
+
+  <!-- STATS BAR -->
+  <tr>
+    <td style="background:#1a1a2e;padding:16px 40px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="center" style="width:50%;border-right:1px solid #2a2a4a;padding:8px;">
+            <div style="font-size:28px;font-weight:700;color:#a78bfa;">{{ startup_count }}</div>
+            <div style="font-size:11px;color:#8888aa;text-transform:uppercase;letter-spacing:1px;">Startup &amp; Funding</div>
+          </td>
+          <td align="center" style="width:50%;padding:8px;">
+            <div style="font-size:28px;font-weight:700;color:#34d399;">{{ grants_count }}</div>
+            <div style="font-size:11px;color:#8888aa;text-transform:uppercase;letter-spacing:1px;">Grants &amp; Schemes</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- SPACER -->
+  <tr><td style="background:#0f0f1a;height:8px;"></td></tr>
+
+  <!-- ── SECTION: STARTUPS ── -->
+  {% if startups %}
+  <tr>
+    <td style="background:#0f0f1a;padding:0 0 6px;">
+      <!-- Section Header -->
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="background:#1a1a2e;border-left:4px solid #a78bfa;padding:12px 20px 12px 24px;border-radius:0;">
+            <span style="color:#a78bfa;font-size:16px;font-weight:700;">🚀 &nbsp;Funding &amp; Startups</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  {% for article in startups %}
+  <tr>
+    <td style="padding:6px 0;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#1a1a2e;border-radius:10px;border-left:3px solid #6c3de8;">
+        <tr>
+          <td style="padding:18px 22px;">
+            <!-- Title -->
+            <a href="{{ article.url }}" style="text-decoration:none;">
+              <p style="margin:0 0 6px;color:#e8e8ff;font-size:15px;font-weight:600;line-height:1.4;">
+                {{ article.title }}
+              </p>
+            </a>
+            <!-- Meta -->
+            <p style="margin:0 0 10px;font-size:12px;color:#6666aa;">
+              📰 {{ article.source }}
+              {% if article.published_at %}
+                &nbsp;·&nbsp; 🕐 {{ article.published_at[:10] }}
+              {% endif %}
+            </p>
+            <!-- Summary -->
+            {% if article.summary %}
+            <p style="margin:0 0 12px;color:#9999cc;font-size:13px;line-height:1.5;">
+              {{ article.summary[:200] }}{% if article.summary|length > 200 %}…{% endif %}
+            </p>
+            {% endif %}
+            <!-- Keywords -->
+            {% if article.keywords %}
+            <div>
+              {% for kw in article.keywords %}
+              <span style="display:inline-block;background:#2a1a4e;color:#a78bfa;font-size:11px;padding:3px 9px;border-radius:20px;margin:2px 3px 2px 0;">#{{ kw }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <!-- CTA -->
+            <div style="margin-top:14px;">
+              <a href="{{ article.url }}" style="display:inline-block;background:linear-gradient(90deg,#6c3de8,#3b9ef5);color:#fff;font-size:12px;font-weight:600;padding:7px 18px;border-radius:20px;text-decoration:none;">
+                Read Article →
+              </a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+  {% endif %}
+
+  <!-- SPACER -->
+  <tr><td style="height:16px;background:#0f0f1a;"></td></tr>
+
+  <!-- ── SECTION: GRANTS ── -->
+  {% if grants %}
+  <tr>
+    <td style="background:#0f0f1a;padding:0 0 6px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="background:#1a1a2e;border-left:4px solid #34d399;padding:12px 20px 12px 24px;">
+            <span style="color:#34d399;font-size:16px;font-weight:700;">🏛️ &nbsp;Government Grants &amp; Schemes</span>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  {% for article in grants %}
+  <tr>
+    <td style="padding:6px 0;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#1a1a2e;border-radius:10px;border-left:3px solid #34d399;">
+        <tr>
+          <td style="padding:18px 22px;">
+            <a href="{{ article.url }}" style="text-decoration:none;">
+              <p style="margin:0 0 6px;color:#e8e8ff;font-size:15px;font-weight:600;line-height:1.4;">
+                {{ article.title }}
+              </p>
+            </a>
+            <p style="margin:0 0 10px;font-size:12px;color:#6666aa;">
+              📰 {{ article.source }}
+              {% if article.published_at %}
+                &nbsp;·&nbsp; 🕐 {{ article.published_at[:10] }}
+              {% endif %}
+            </p>
+            {% if article.summary %}
+            <p style="margin:0 0 12px;color:#9999cc;font-size:13px;line-height:1.5;">
+              {{ article.summary[:200] }}{% if article.summary|length > 200 %}…{% endif %}
+            </p>
+            {% endif %}
+            {% if article.keywords %}
+            <div>
+              {% for kw in article.keywords %}
+              <span style="display:inline-block;background:#0d2e25;color:#34d399;font-size:11px;padding:3px 9px;border-radius:20px;margin:2px 3px 2px 0;">#{{ kw }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <div style="margin-top:14px;">
+              <a href="{{ article.url }}" style="display:inline-block;background:linear-gradient(90deg,#059669,#34d399);color:#fff;font-size:12px;font-weight:600;padding:7px 18px;border-radius:20px;text-decoration:none;">
+                Read Article →
+              </a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  {% endfor %}
+  {% endif %}
+
+  <!-- NO ARTICLES FALLBACK -->
+  {% if not startups and not grants %}
+  <tr>
+    <td style="background:#1a1a2e;border-radius:10px;padding:40px;text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">📭</div>
+      <p style="color:#6666aa;font-size:14px;">No relevant articles found in the last 24 hours.<br>Check back tomorrow!</p>
+    </td>
+  </tr>
+  {% endif %}
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="background:#12122a;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;margin-top:16px;">
+      <p style="margin:0 0 8px;color:#4444aa;font-size:12px;">
+        🤖 Auto-generated by <strong style="color:#a78bfa;">India Startup Digest Bot</strong>
+      </p>
+      <p style="margin:0;color:#333366;font-size:11px;">
+        Scraped from YourStory · Inc42 · ET Startups · VCCircle · PIB · Google News · Startup India Portal
+      </p>
+      <p style="margin:8px 0 0;color:#333366;font-size:11px;">
+        Generated at {{ generated_at }} IST
+      </p>
+    </td>
+  </tr>
+
+</table>
+<!-- /Container -->
+
+</td></tr>
+</table>
+<!-- /Wrapper -->
+
+</body>
+</html>

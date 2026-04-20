@@ -1,0 +1,13 @@
+# Secrets (NEVER commit these)
+.env
+
+# Generated files (re-created on every run)
+articles.json
+dashboard.html
+scraper.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
