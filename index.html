@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India Startup & Grants Digest — Wednesday, 22 April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0b0b18;
+    --surface:   #13132a;
+    --card:      #1a1a35;
+    --card-hover:#20203f;
+    --border:    #2a2a50;
+    --purple:    #7c5cf4;
+    --purple-lt: #a78bfa;
+    --green:     #10b981;
+    --green-lt:  #34d399;
+    --blue:      #3b82f6;
+    --text:      #e2e2f8;
+    --muted:     #8888bb;
+    --tag-bg:    rgba(124,92,244,0.15);
+    --tag-gr:    rgba(16,185,129,0.15);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1e0a5e 0%, #0d2b6b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    text-align: center;
+  }
+  .header-icon { font-size: 48px; margin-bottom: 12px; }
+  .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
+  .header .sub {
+    margin-top: 8px;
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+  }
+
+  /* ── Stats Bar ── */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+    min-width: 100px;
+  }
+  .stat-num { font-size: 32px; font-weight: 800; color: var(--purple-lt); }
+  .stat-num.green { color: var(--green-lt); }
+  .stat-num.blue { color: #60a5fa; }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 16px 10px 40px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: var(--purple); }
+  .search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .filter-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { background: var(--card-hover); color: var(--text); }
+  .filter-btn.active-all { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .filter-btn.active-startups { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .filter-btn.active-grants { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* ── Grid ── */
+  .grid {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: background 0.2s, transform 0.2s, border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    border-left: 3px solid var(--purple);
+  }
+  .card.grants-card { border-left-color: var(--green); }
+  .card:hover {
+    background: var(--card-hover);
+    transform: translateY(-2px);
+    border-color: var(--purple-lt);
+  }
+  .card.grants-card:hover { border-color: var(--green-lt); }
+
+  .card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    align-self: flex-start;
+    background: var(--tag-bg);
+    color: var(--purple-lt);
+  }
+  .card.grants-card .card-badge {
+    background: var(--tag-gr);
+    color: var(--green-lt);
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .card-meta .source {
+    background: rgba(255,255,255,0.06);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .card-summary {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .keywords { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kw {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--tag-bg);
+    color: var(--purple-lt);
+    font-weight: 500;
+  }
+  .grants-card .kw { background: var(--tag-gr); color: var(--green-lt); }
+
+  .read-btn {
+    align-self: flex-start;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--purple-lt);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .grants-card .read-btn { color: var(--green-lt); }
+
+  /* ── Empty state ── */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🚀</div>
+  <h1>India Startup &amp; Grants Digest</h1>
+  <p class="sub">Wednesday, 22 April 2026 &nbsp;·&nbsp; Last 24 hours &nbsp;·&nbsp; Generated at 02:49 PM IST</p>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num blue" id="total-count">19</div>
+    <div class="stat-label">Total Articles</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" id="startup-count">16</div>
+    <div class="stat-label">Startup &amp; Funding</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num green" id="grants-count">3</div>
+    <div class="stat-label">Grants &amp; Schemes</div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Search articles, sources, keywords…" oninput="filterArticles()">
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn active-all" id="btn-all"      onclick="setFilter('all')">All</button>
+    <button class="filter-btn"            id="btn-startups" onclick="setFilter('startups')">🚀 Startups</button>
+    <button class="filter-btn"            id="btn-grants"   onclick="setFilter('grants')">🏛️ Grants</button>
+  </div>
+</div>
+
+<div class="grid" id="articles-grid"></div>
+
+<div class="footer">
+  🤖 Auto-generated by India Startup Digest Bot &nbsp;·&nbsp;
+  Sources: YourStory · Inc42 · ET Startups · Google News · PIB · Startup India Portal
+</div>
+
+<script>
+const ARTICLES = [
+  {
+    "title": "Preventive healthcare startup CENT opens flagship clinic in Bengaluru",
+    "url": "https://yourstory.com/2026/04/preventive-healthcare-startup-cent-opens-flagship-clinic-in-bengaluru",
+    "source": "YourStory",
+    "summary": "The 7,000 sq. ft. facility in Bengaluru, positioned as a single-purpose prevention centre,  is designed to detect life-threatening conditions in asymptomatic individuals.",
+    "published_at": "2026-04-21T10:25:08+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "Startup news and updates: Daily roundup (April 21, 2026)",
+    "url": "https://yourstory.com/2026/04/startup-news-and-updates-daily-roundup-april-21-2026",
+    "source": "YourStory",
+    "summary": "YourStory presents the daily news roundup from the Indian startup ecosystem and beyond. Here’s the roundup for Tuesday, April 21, 2026",
+    "published_at": "2026-04-21T12:10:53+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "D2C Footwear Brand Chupps Ropes In Cricketer Ajinkya Rahane As Investor",
+    "url": "https://inc42.com/buzz/d2c-footwear-brand-chupps-ropes-in-cricketer-ajinkya-rahane-as-investor/",
+    "source": "Inc42",
+    "summary": "D2C footwear brand Chupps has roped in Indian cricketer Ajinkya Rahane as an investor and strategic advisor as part of&#8230;",
+    "published_at": "2026-04-22T06:43:40+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "AI For Defence: Sarvam, Other AI Startups To Set Up $300 Mn CoE",
+    "url": "https://inc42.com/buzz/ai-for-defence-sarvam-other-ai-startups-to-set-up-300-mn-coe/",
+    "source": "Inc42",
+    "summary": "Bengaluru-based Sarvam and other AI startups are reportedly in advanced talks with the defence ministry to launch a ₹300 Cr&#8230;",
+    "published_at": "2026-04-22T06:43:24+00:00",
+    "keywords": [],
+    "category": "grants"
+  },
+  {
+    "title": "Top Foreign Investors Backing India’s New-Age Tech IPOs",
+    "url": "https://inc42.com/features/top-foreign-investors-backing-indias-new-age-tech-ipos/",
+    "source": "Inc42",
+    "summary": "Foreign investors are doubling down on India’s new-age tech ecosystem, with their presence becoming more visible in anchor rounds.  As&#8230;",
+    "published_at": "2026-04-21T11:47:54+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "Mirae Asset to lead Krafton, Naver’s  ₹6,000 cr bet on India’s early-growth-stage tech startups",
+    "url": "https://www.livemint.com/technology/tech-news/mirae-asset-krafton-naver-6-000-cr-bet-india-early-growth-stage-tech-startups-unicorn-growth-fund-consumer-tech-ai-11776774889789.html",
+    "source": "Mint Tech",
+    "summary": "The new fund marks a significant investment trend from Asian firms seeking to capitalize on India's evolving startup ecosystem.",
+    "published_at": "2026-04-21T14:02:14+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "Gaming startup Spill Games raises $3.1 million from Centre Court Capital and PeerCapital",
+    "url": "https://economictimes.indiatimes.com/tech/funding/gaming-startup-spill-games-raises-3-1-million-from-centre-court-capital-and-peercapital/articleshow/130434162.cms",
+    "source": "ET Tech",
+    "summary": "Bengaluru-based gaming startup Spill Games has secured $3.1 million in seed funding from Centre Court Capital and PeerCapital. The company, founded by former PlaySimple Games executives. It plans to use the investment for user acquisition and to develop a diversified portfolio of profitable titles.",
+    "published_at": "2026-04-22T06:43:04+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "Art of AI war: Sarvam to boost defence prowess",
+    "url": "https://economictimes.indiatimes.com/tech/artificial-intelligence/art-of-ai-war-sarvam-to-boost-defence-prowess/articleshow/130426430.cms",
+    "source": "ET Tech",
+    "summary": "India is boosting its defence capabilities with a new Rs 300 crore Centre of Excellence for artificial intelligence. Homegrown labs like Sarvam are in talks with the defence ministry. This initiative aims to develop AI systems tailored for India's unique operational needs. The goal is to reduce reliance on foreign technology and enhance national se",
+    "published_at": "2026-04-22T00:30:00+00:00",
+    "keywords": [],
+    "category": "grants"
+  },
+  {
+    "title": "Competition doesn’t limit growth in India: Groww’s Lalit Keshre on building a full-stack wealth platform",
+    "url": "https://economictimes.indiatimes.com/tech/startups/competition-doesnt-limit-growth-in-india-growws-lalit-keshre-on-building-a-full-stack-wealth-platform/articleshow/130424887.cms",
+    "source": "ET Tech",
+    "summary": "After steering Groww to a blockbuster IPO in under a decade, Keshre was named Entrepreneur of the Year at The Economic Times Awards for Corporate Excellence 2025, having outpaced legacy bank-backed brokerages and established fintech incumbents.",
+    "published_at": "2026-04-21T18:22:56+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "Rainmatter invests Rs 20 crore in wealth management startup Prime Investor",
+    "url": "https://economictimes.indiatimes.com/tech/startups/rainmatter-invests-rs-20-crore-in-wealth-management-startup-prime-investor/articleshow/130417015.cms",
+    "source": "ET Tech",
+    "summary": "Zerodha-backed Rainmatter has injected Rs 20 crore into Chennai-based Prime Investor, marking the wealth advisory startup's first institutional funding.  The capital will fuel a transition from advisory services to a full-stack portfolio management service, targeting clients with a minimum asset base of Rs 50 lakh. This strategic shift aims to leve",
+    "published_at": "2026-04-21T12:30:00+00:00",
+    "keywords": [],
+    "category": "grants"
+  },
+  {
+    "title": "India Startup Ecosystem, 55,200 Startups Recognized in FY 2025-26 - Vajiram & Ravi",
+    "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE50d1JTZmJyWFNPM3NxVGxVWVlHeVFlZ1JOX3l5Q1JReTVBOXhZTURySU1XX1NnNlhCVDNETVMzRzJVak45QnZna3BRekFtandtbVVuSjFVU3BYZkowcUp3cG1LNkJoRFRhQmlCeDItYktEZDMzcXc?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "India Startup Ecosystem, 55,200 Startups Recognized in FY 2025-26 &nbsp;&nbsp; Vajiram & Ravi",
+    "published_at": "2026-04-21T12:01:22+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "India retains fourth spot in global startup funding with $11.7 billion in FY26: Tracxn - Fortune India",
+    "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPMi0xT0lDS1JRT21meXZpXzhtQUFqdzdFekc1em8weENGOElzTVlmOXZPWWRhcVJJSUpQcVY2NGlRTzcyUUZpbWR0OURKaHVWWVN2WC1IMFFaRm13T0Q3RURFLWZERWxDWjlLWjdKQms0TEVQUHg5YlctMlItSFM5U2M1X3g0Ymx3VFdmWkp1SGh2WGszY2ZqMkotN2htV0xleEFqeFRmcF9hTXpjWFNUYlh6bUhuTmlPNFg5LTByTktSOGpNSGdZRWVvZFNJUdIB2wFBVV95cUxPR3ZmMm0yZ2VvR3YtZ051dGxyM190eVdzUUtzbGxGcWNZUS1Lb0RIUzY5dTR5T01qQ1NGNnZhdlVlamhMbWR2c0t6OS16Yzk5Sll0Q3dMQjBna19VRUh4Rm56TVZYVnJQWV9vMW5uaU9ISTFrZVlCRmV6a3BxLTBta0V2N2hFVFdYbzg4SHBqVU5LN2dZdnYyaWlOWVpUWjc3US1GRTZxNXVSOGdfS3hCcjg2VlNWTElPWWp4Zjk5ZjB3M3JIT3FVamJnNG1rMllqeU1kY3U5T0JmLTQ?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "India retains fourth spot in global startup funding with $11.7 billion in FY26: Tracxn &nbsp;&nbsp; Fortune India",
+    "published_at": "2026-04-21T11:57:06+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "India Startup Ecosystem Sees Record Recognition Surge - usthadian.com",
+    "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNUjZVd09CQ3pVekEzZHptV2ItWTJqektvdnhFWVRoUmxsZVpaUWstcThHdWJ5T21KV3Z0UjZXQklZZzF4azJsMTVYdXJWY0xmZHh3cllucXBOMXc5Qi1hNFZBLVdHVFhnMEluUFlYbVpuUy1ldDZwdF9UZnBCUGUzV1JGYjlBOU0?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "India Startup Ecosystem Sees Record Recognition Surge &nbsp;&nbsp; usthadian.com",
+    "published_at": "2026-04-22T04:58:45+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "India holds fourth startup spot as funding slips, investors turn selective - Business Standard",
+    "url": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxNdHJnOGd0LUVvTkZEaWFJeU16elh6M2FQaWgwTTJwSThZSHctZXBrbVRpMEc4WVRfNW9tRUVvaGF4eU82NU9mUF9GQ09HcEd3b0JFRGt0dVU2UW1QY0JNSEpmbWdRakFTaFR4NXBKZW8yUDhxbjNfRUtPRWpKOTl3VzVQU29yVWoyMTNJc3VXZ2JWNGJKVk1jb1BtekxzZ3dXNU4zME5kanJEeHUxU3RIal9TZk0zbThqUV94MnBLbnRZeTM3TjhjQ1NDQ3NJY3RtODVwUXlyd0jSAd4BQVVfeXFMTnZZSWVLOUlIVy10eEdPNy0yUlRkZGZQZm55aUJPZlR5Ml9PREVVa1NLVzd2aUx4MFdKVVBqSVV1T1VHanZZZEtYRmZKYnRmM0tWdDVHeS1uNXd4Y3dGY1JDZ09mLUxsOUNvWGF3NWVfNWdWbjEzRGtrdFRjWHVNdUJua0dUNDhDQlRpRlBVMmZCTnZHZ0NqU25YYUVwcVBpdFhCWjl6aFpSZGV0c2RzZ3RISEdWM1BOa0twS3hoaDhvSUxKVzB0Q2NoT3IwNUJGZGE3MURRclNYVmdiVGV3?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "India holds fourth startup spot as funding slips, investors turn selective &nbsp;&nbsp; Business Standard",
+    "published_at": "2026-04-21T14:10:13+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "South Korean Firms Launch Rs 6,000 Crore India Startup Fund Targeting AI And Deeptech Growth - APAC News Network",
+    "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQMTNlbFNjVXd5T1NNY3RzZ3liV2xvNVpiOVlxUmxUbElCTmZ2M3ZKWlBSd2libTQ4cVJDNUdqVTJyVVN3V3o3Qm45WWEzYzVOeERBSkhwVFpsTmlFRDVOS0ItNkdKbDdvWndubVBkbmE1Z2ZDSWJhR0NqcUZrb3UzUjN6MjVrSzJZeGxwNGd1OXdlVVkxaWM3SHdsZG5OMUZENlBfQnFTZjBZTmlMQTd6dEtpZm5UVjRyLVR1RC16U2ZQZTR5YjRF?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "South Korean Firms Launch Rs 6,000 Crore India Startup Fund Targeting AI And Deeptech Growth &nbsp;&nbsp; APAC News Network",
+    "published_at": "2026-04-22T06:43:04+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "{Funding Alert} Bengaluru Startup Spill Games Secures $3.1 Mn Seed Capital - Indian Retailer",
+    "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOU0dLRjdwT2swd1hXUlZFOTdVSTZYbUItMDA2UFYzbDltdWxsWHFZZkJKbDl0UDQzR0FUdUU3aTNQNmpZWG9ITFo3T0lPRVdPQUpsUFNYOE14bm1vb21lWWJfaURpVllqRVNLSzRBQTN2TDRscnA2RUczQTFSUDZWUlBLblJMUUtLMllzNjV0dzFuNUgzd0tFbUJzQUI0ci15Y0R3MDZoTDVKUQ?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "{Funding Alert} Bengaluru Startup Spill Games Secures $3.1 Mn Seed Capital &nbsp;&nbsp; Indian Retailer",
+    "published_at": "2026-04-22T08:37:30+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "South Korea’s KRAFTON, Naver, and Mirae Asset launch Rs 6,000 crore fund to support India startups - Indian Startup News",
+    "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNLW1uSmdJUm04dVQ2MGR6VWVsY3N1d25FSEVrcm1nVmdQOEY3RVpMSlpNU0NEd1g2Y1NjU0xURzh3OUkyVnU3SEYzZGI2R2R5OXlkWUczM2w1bWszVDhiSEYtMEVrd3JjSHZFel9UTzZnMjgyUEdjSmVCUUg2NmNDQU5zWVhpZFVzOC1EY0NpOG5lWWxZVzkxNXFHZm9EWlZmVnNKWV82NnNUQXZ6NFF6MU5BVHBSdGljNm9RWjB3eEZ0T0U2SzhjNGVrSEV0aTVUa1hKMdIB1AFBVV95cUxNLW1uSmdJUm04dVQ2MGR6VWVsY3N1d25FSEVrcm1nVmdQOEY3RVpMSlpNU0NEd1g2Y1NjU0xURzh3OUkyVnU3SEYzZGI2R2R5OXlkWUczM2w1bWszVDhiSEYtMEVrd3JjSHZFel9UTzZnMjgyUEdjSmVCUUg2NmNDQU5zWVhpZFVzOC1EY0NpOG5lWWxZVzkxNXFHZm9EWlZmVnNKWV82NnNUQXZ6NFF6MU5BVHBSdGljNm9RWjB3eEZ0T0U2SzhjNGVrSEV0aTVUa1hKMQ?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "South Korea’s KRAFTON, Naver, and Mirae Asset launch Rs 6,000 crore fund to support India startups &nbsp;&nbsp; Indian Startup News",
+    "published_at": "2026-04-21T14:39:54+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "{Funding Alert} Healthcare Startup Coral Secures $12.5 Mn Funding - Indian Retailer",
+    "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOQ01DZm9MSmp4NEFod3ZPc2JSYTlqYVhiMGstcHVhQ3FJb2lZWEt3RUk0bmlSZ0kxMDV5QVo5QzltaVFQYjZoWHVqd0tnMlQ4TDhPNVFMWGIyM0JiaUtmbUNvRmZyaVlwWFJ5TmMyVXEzOFZFVkVjQURaOG85YmdSNG42d0xLZ3NNaFFmX0toa3dOYzFCWC10Q0EzdE9qZw?oc=5",
+    "source": "GNews - Startup Funding",
+    "summary": "{Funding Alert} Healthcare Startup Coral Secures $12.5 Mn Funding &nbsp;&nbsp; Indian Retailer",
+    "published_at": "2026-04-21T11:27:54+00:00",
+    "keywords": [],
+    "category": "startups"
+  },
+  {
+    "title": "KRAFTON and Naver launch ₹6000-Cr unicorn growth fund to invest in Indian tech startups - Business Review Live",
+    "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPVzJ1dE4yOFZSSFZ2Z2JYWDJvcVp4ZFcwRFppaDNuMkVJbV9acnNFdnM0UXF2ZmJ0QUZhNzhiVE9ZUXZxNWxzVnE2dXBzUHBLZDV2ZmpBRndzMVd3MDlvNDRJcGlTZnF2Vk9RSFNQRHAtMXJTdmk5dDhqdGVIM3liUEplS3g4ZERJaGFuZVRRUG5Xbzc5ZHE2S1JuSFlpQzRaQjZTbXp0RjZNV21oU0FiME9QVjluc1d6c1BBN1BrMmRELXlYaXc?oc=5",
+    "source": "GNews - Deep Tech Startups",
+    "summary": "KRAFTON and Naver launch ₹6000-Cr unicorn growth fund to invest in Indian tech startups &nbsp;&nbsp; Business Review Live",
+    "published_at": "2026-04-21T10:31:40+00:00",
+    "keywords": [],
+    "category": "startups"
+  }
+];
+
+let activeFilter = 'all';
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn';
+  });
+  const map = { all: 'active-all', startups: 'active-startups', grants: 'active-grants' };
+  document.getElementById('btn-' + f).classList.add(map[f]);
+  filterArticles();
+}
+
+function filterArticles() {
+  const query = document.getElementById('search-input').value.toLowerCase();
+  const grid  = document.getElementById('articles-grid');
+  grid.innerHTML = '';
+
+  const filtered = ARTICLES.filter(a => {
+    const catOk = activeFilter === 'all' || a.category === activeFilter;
+    const searchOk = !query ||
+      a.title.toLowerCase().includes(query) ||
+      (a.source || '').toLowerCase().includes(query) ||
+      (a.summary || '').toLowerCase().includes(query) ||
+      (a.keywords || []).some(k => k.toLowerCase().includes(query));
+    return catOk && searchOk;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>No articles match your search.</p></div>`;
+    return;
+  }
+
+  filtered.forEach(a => {
+    const isGrant  = a.category === 'grants';
+    const badge    = isGrant ? '🏛️ Grants' : '🚀 Startup';
+    const kwHtml   = (a.keywords || []).map(k => `<span class="kw">#${k}</span>`).join('');
+    const date     = a.published_at ? a.published_at.substring(0, 10) : '';
+    const summary  = a.summary ? `<p class="card-summary">${a.summary}</p>` : '';
+
+    const card = document.createElement('a');
+    card.href        = a.url;
+    card.target      = '_blank';
+    card.rel         = 'noopener noreferrer';
+    card.className   = 'card' + (isGrant ? ' grants-card' : '');
+    card.innerHTML   = `
+      <span class="card-badge">${badge}</span>
+      <p class="card-title">${a.title}</p>
+      <div class="card-meta">
+        <span class="source">${a.source || ''}</span>
+        ${date ? `<span>📅 ${date}</span>` : ''}
+      </div>
+      ${summary}
+      ${kwHtml ? `<div class="keywords">${kwHtml}</div>` : ''}
+      <span class="read-btn">Read Article →</span>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+filterArticles();
+</script>
+</body>
+</html>
