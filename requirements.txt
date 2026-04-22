@@ -1,4 +1,4 @@
-playwright==1.44.0
+playwright>=1.50.0
 feedparser==6.0.11
 yake==0.4.8
 python-dotenv==1.0.1
