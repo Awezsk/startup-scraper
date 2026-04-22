@@ -5,6 +5,9 @@ on:
     - cron: '30 4 * * *'  # 4:30 AM UTC = 10:00 AM IST
   workflow_dispatch:      # Allows manual trigger for testing
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   send-email:
     runs-on: ubuntu-22.04
