@@ -94,7 +94,9 @@ def build_and_send():
 
     log.info(f"Rendering email: {total} articles ({len(startups)} startups, {len(grants)} grants)")
     html = render_email(startups, grants)
-    send_email(html, subject)
+    success = send_email(html, subject)
+    if not success:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

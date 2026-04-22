@@ -38,3 +38,15 @@ jobs:
         with:
           commit_message: "Auto-update: articles.json and dashboard.html"
           file_pattern: articles.json dashboard.html scraper.log
+
+      - name: Prepare GitHub Pages
+        run: |
+          mkdir -p public
+          cp dashboard.html public/index.html
+          
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
