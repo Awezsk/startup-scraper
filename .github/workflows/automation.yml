@@ -2,7 +2,7 @@ name: Daily Scraper & Email Digest
 
 on:
   schedule:
-    - cron: '0 3 * * *'   # 8:30 IST'  #
+    - cron: '30 23 * * *'   # 5:00 AM IST'  #
   workflow_dispatch:      # Allows manual trigger for testing
 
 env:
