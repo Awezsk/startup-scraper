@@ -227,7 +227,37 @@ async def _run_playwright() -> list[dict]:
             await browser.close()
     return articles
 
+# ── Supabase Push ──────────────────────────────────────────────────
 
+def _push_to_supabase(articles: list[dict]):
+    """Push scraped articles to Supabase so newsletter API can read them."""
+    import os
+    url = os.getenv("SUPABASE_URL", "")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+    if not url or not key:
+        log.warning("Supabase env vars missing — skipping DB push")
+        return
+    try:
+        from supabase import create_client
+        sb = create_client(url, key)
+        pushed = 0
+        for a in articles:
+            try:
+                sb.table("articles").upsert({
+                    "title":        a["title"],
+                    "summary":      a.get("summary", ""),
+                    "url":          a["url"],
+                    "source":       a.get("source", ""),
+                    "category":     a.get("category", "startups"),
+                    "published_at": a.get("published_at"),
+                }, on_conflict="url").execute()
+                pushed += 1
+            except Exception:
+                continue
+        log.info(f"Pushed {pushed} articles to Supabase")
+    except Exception as e:
+        log.warning(f"Supabase push failed: {e}")
+        
 # ── Main Entry Point ───────────────────────────────────────────────
 
 def run_scraper() -> list[dict]:
@@ -262,6 +292,7 @@ def run_scraper() -> list[dict]:
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(unique, f, indent=2, ensure_ascii=False)
     log.info(f"Saved -> {OUTPUT_FILE}")
+    _push_to_supabase(unique)
 
     # Auto-generate HTML dashboard
     try:

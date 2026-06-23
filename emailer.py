@@ -1,8 +1,5 @@
 """
-emailer.py — Renders the HTML digest and sends it via Gmail SMTP.
-Usage:
-    python emailer.py          → sends using current articles.json
-    python emailer.py --test   → sends test email immediately
+emailer.py — Fetches verified subscribers from Supabase and sends digest.
 """
 
 import logging
@@ -14,21 +11,41 @@ from email.mime.text import MIMEText
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
+from dotenv import load_dotenv
+import os
 
-from config import (
-    SENDER_EMAIL, SENDER_APP_PASSWORD, RECIPIENT_EMAILS,
-    SMTP_HOST, SMTP_PORT,
-)
-from processor import load_and_process
+load_dotenv()
+
+SENDER_EMAIL        = os.getenv("SENDER_EMAIL", "")
+SENDER_APP_PASSWORD = os.getenv("SENDER_APP_PASSWORD", "")
+SUPABASE_URL        = os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY        = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+SMTP_HOST           = "smtp.gmail.com"
+SMTP_PORT           = 587
+IST                 = timezone(timedelta(hours=5, minutes=30))
+TEMPLATE_FILE       = "template.html"
 
 log = logging.getLogger(__name__)
 
-IST = timezone(timedelta(hours=5, minutes=30))
-TEMPLATE_FILE = "template.html"
+
+def get_verified_subscribers() -> list[dict]:
+    try:
+        from supabase import create_client
+        sb = create_client(SUPABASE_URL, SUPABASE_KEY)
+        result = sb.table("subscribers") \
+                   .select("email, founder_name, startup_name, access_code") \
+                   .eq("verified", True) \
+                   .execute()
+        subs = result.data or []
+        log.info(f"Fetched {len(subs)} verified subscribers from Supabase")
+        return subs
+    except Exception as e:
+        log.error(f"Failed to fetch subscribers: {e}")
+        return []
 
 
-def render_email(startups: list[dict], grants: list[dict]) -> str:
-    """Render the Jinja2 HTML template."""
+def render_email(startups: list[dict], grants: list[dict],
+                 founder_name: str = "", startup_name: str = "") -> str:
     now_ist = datetime.now(IST)
     env = Environment(loader=FileSystemLoader(str(Path(__file__).parent)))
     template = env.get_template(TEMPLATE_FILE)
@@ -40,67 +57,72 @@ def render_email(startups: list[dict], grants: list[dict]) -> str:
         grants_count=len(grants),
         date_str=now_ist.strftime("%A, %d %B %Y"),
         generated_at=now_ist.strftime("%I:%M %p"),
+        founder_name=founder_name,
+        startup_name=startup_name,
     )
 
 
-def send_email(html_body: str, subject: str) -> bool:
-    """Send HTML email via Gmail SMTP to all recipients. Returns True on success."""
-    if not all([SENDER_EMAIL, SENDER_APP_PASSWORD, RECIPIENT_EMAILS]):
-        log.error("Missing Gmail credentials or recipients — check your .env file or Secrets")
-        return False
+def build_and_send():
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s [%(levelname)s] %(message)s")
 
-    recipients = [e.strip() for e in RECIPIENT_EMAILS.split(",") if e.strip()]
-    if not recipients:
-        log.error("No valid recipient emails found.")
-        return False
+    from processor import load_and_process
+    startups, grants = load_and_process()
+    total = len(startups) + len(grants)
+
+    now_ist = datetime.now(IST)
+    subject = (
+        f"🚀 IncubeIn Startup Digest — "
+        f"{now_ist.strftime('%d %b %Y')} | {total} articles"
+    )
+
+    subscribers = get_verified_subscribers()
+    if not subscribers:
+        log.warning("No verified subscribers — nothing to send.")
+        return
+
+    log.info(f"Sending to {len(subscribers)} subscribers...")
+    success_count = 0
+    fail_count = 0
 
     try:
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
             server.ehlo()
             server.starttls()
             server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
-            
-            for recipient in recipients:
-                msg = MIMEMultipart("alternative")
-                msg["Subject"] = subject
-                msg["From"]    = f"India Digest Bot <{SENDER_EMAIL}>"
-                msg["To"]      = recipient
-                msg.attach(MIMEText(html_body, "html", "utf-8"))
-                
-                server.sendmail(SENDER_EMAIL, recipient, msg.as_string())
-                log.info(f"✅ Email sent to {recipient}")
-                
-        return True
+
+            for sub in subscribers:
+                try:
+                    html = render_email(
+                        startups, grants,
+                        founder_name=sub.get("founder_name", "Founder"),
+                        startup_name=sub.get("startup_name", "Your Startup"),
+                    )
+                    msg = MIMEMultipart("alternative")
+                    msg["Subject"] = subject
+                    msg["From"]    = f"IncubeIn Digest <{SENDER_EMAIL}>"
+                    msg["To"]      = sub["email"]
+                    msg.attach(MIMEText(html, "html", "utf-8"))
+                    server.sendmail(SENDER_EMAIL, sub["email"], msg.as_string())
+                    log.info(f"  Sent -> {sub['email']}")
+                    success_count += 1
+                except Exception as e:
+                    log.error(f"  Failed -> {sub['email']}: {e}")
+                    fail_count += 1
+
     except smtplib.SMTPAuthenticationError:
-        log.error("Gmail auth failed — did you use an App Password? (not your real password)")
-        return False
+        log.error("Gmail auth failed — check SENDER_APP_PASSWORD")
+        sys.exit(1)
     except Exception as e:
         log.error(f"SMTP error: {e}")
-        return False
-
-
-def build_and_send():
-    """Main entry: load articles → render → send."""
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-
-    startups, grants = load_and_process()
-    total = len(startups) + len(grants)
-
-    now_ist = datetime.now(IST)
-    subject = (
-        f"🚀 India Startup & Grants Digest — "
-        f"{now_ist.strftime('%d %b %Y')} | {total} articles"
-    )
-
-    log.info(f"Rendering email: {total} articles ({len(startups)} startups, {len(grants)} grants)")
-    html = render_email(startups, grants)
-    success = send_email(html, subject)
-    if not success:
         sys.exit(1)
+
+    log.info(f"Done: {success_count} sent, {fail_count} failed.")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s [%(levelname)s] %(message)s")
 
     if "--test" in sys.argv:
         log.info("TEST MODE — using sample data")
@@ -108,21 +130,39 @@ if __name__ == "__main__":
             "title": "Test Startup raises ₹50Cr Series A from XYZ Ventures",
             "url": "https://example.com",
             "source": "YourStory",
-            "summary": "A Bengaluru-based fintech startup has raised ₹50 crore in a Series A round.",
+            "summary": "A Bengaluru-based fintech startup has raised ₹50 crore.",
             "published_at": "2026-04-17T08:00:00+05:30",
-            "keywords": ["Series A", "fintech", "Bengaluru", "startup funding"],
+            "keywords": ["Series A", "fintech"],
             "category": "startups",
         }]
         grants_sample = [{
             "title": "DPIIT Launches ₹100Cr Innovation Grant for Deep Tech Startups",
             "url": "https://example.com/grant",
             "source": "PIB India",
-            "summary": "The Department for Promotion of Industry and Internal Trade announced a new grant.",
+            "summary": "DPIIT announced a new grant for deep tech startups.",
             "published_at": "2026-04-17T09:00:00+05:30",
-            "keywords": ["DPIIT", "grant", "deep tech", "innovation"],
+            "keywords": ["DPIIT", "grant"],
             "category": "grants",
         }]
-        html = render_email(sample, grants_sample)
-        send_email(html, "🚀 TEST — India Startup & Grants Digest")
+        html = render_email(sample, grants_sample,
+                            founder_name="Awez", startup_name="IncubeIn")
+        # For test mode, send to your own email directly
+        import smtplib
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+        try:
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+                server.ehlo()
+                server.starttls()
+                server.login(SENDER_EMAIL, SENDER_APP_PASSWORD)
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = "🚀 TEST — IncubeIn Startup Digest"
+                msg["From"]    = f"IncubeIn Digest <{SENDER_EMAIL}>"
+                msg["To"]      = SENDER_EMAIL
+                msg.attach(MIMEText(html, "html", "utf-8"))
+                server.sendmail(SENDER_EMAIL, SENDER_EMAIL, msg.as_string())
+                log.info(f"Test email sent to {SENDER_EMAIL}")
+        except Exception as e:
+            log.error(f"Test send failed: {e}")
     else:
         build_and_send()
